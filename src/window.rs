@@ -14,7 +14,8 @@ impl Window {
 
         // Devel Profile
         if PROFILE == "Devel" {
-            window.get_style_context().add_class("devel");
+            // TODO: uncomment when there's a non-Devel release.
+            // window.get_style_context().add_class("devel");
         }
 
         Window { window }
