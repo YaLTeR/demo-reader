@@ -1,4 +1,5 @@
 use std::env;
+use std::rc::Rc;
 
 use gio::prelude::*;
 use glib::g_debug;
@@ -10,14 +11,14 @@ use crate::window::Window;
 
 pub struct Application {
     app: gtk::Application,
-    window: Window,
+    window: Rc<Window>,
 }
 
 impl Application {
     pub fn new() -> Self {
         let app =
             gtk::Application::new(Some(config::APP_ID), gio::ApplicationFlags::NON_UNIQUE).unwrap();
-        let window = Window::new();
+        let window = Rc::new(Window::new());
 
         let application = Self { app, window };
 
@@ -46,12 +47,12 @@ impl Application {
         });
 
         self.app.connect_activate({
-            let window = self.window.window.downgrade();
+            let window = Rc::downgrade(&self.window);
             move |app| {
                 let window = window.upgrade().unwrap();
-                window.set_application(Some(app));
-                app.add_window(&window);
-                window.show_all();
+                window.window.set_application(Some(app));
+                app.add_window(&window.window);
+                window.window.show_all();
             }
         });
     }
