@@ -12,10 +12,6 @@
     ],
     "desktop-file-name-suffix" : " (Devel)",
     "finish-args" : [
-        "--filesystem=xdg-run/dconf",
-        "--filesystem=~/.config/dconf:ro",
-        "--talk-name=ca.desrt.dconf",
-        "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
         "--share=ipc",
         "--socket=fallback-x11",
         "--socket=wayland",
@@ -28,9 +24,7 @@
         ],
         "env" : {
             "RUSTFLAGS" : "--remap-path-prefix =../",
-            "CARGO_HOME" : "/run/build/GtkRustTemplate/cargo",
-            "RUST_BACKTRACE" : "1",
-            "RUST_LOG" : "demo-reader=debug"
+            "CARGO_HOME" : "/run/build/DemoReader/cargo"
         }
     },
     "modules" : [
@@ -43,7 +37,7 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "https://github.com/YaLTeR/demo-reader/.git"
+                    "url" : "https://github.com/YaLTeR/demo-reader.git"
                 }
             ]
         }

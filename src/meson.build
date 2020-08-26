@@ -6,6 +6,7 @@ global_conf.set_quoted('NAME_SUFFIX', name_suffix)
 global_conf.set_quoted('VERSION', version + version_suffix)
 global_conf.set_quoted('GETTEXT_PACKAGE', gettext_package)
 global_conf.set_quoted('LOCALEDIR', localedir)
+global_conf.set_quoted('LOG_DOMAIN', 'DemoReader')
 config = configure_file(
   input: 'config.rs.in',
   output: 'config.rs',
@@ -41,7 +42,6 @@ sources = files(
   'main.rs',
   'static_resources.rs',
   'window.rs',
-  'window_state.rs',
 )
 
 custom_target(

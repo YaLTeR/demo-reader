@@ -77,7 +77,6 @@ ui_config = configuration_data()
 ui_config.set('app-id', application_id)
 ui_config.set('version', meson.project_version() + version_suffix)
 ui_preconfigured_files = files(
-  'resources/ui/about_dialog.ui.in',
   'resources/ui/window.ui.in',
 )
 ui_dependencies = []

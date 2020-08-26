@@ -1,7 +1,7 @@
 project('demo-reader',
         'rust',
         version: '0.0.1',
-        license: 'MIT',
+        license: 'GPL3+',
 	meson_version : '>= 0.50')
 
 i18n = import('i18n')
@@ -63,12 +63,6 @@ meson.add_dist_script(
   meson.build_root() / 'meson-dist' / meson.project_name() + '-' + version,
   meson.source_root()
 )
-
-if get_option('profile') == 'development'
-    # Setup pre-commit hook for ensuring coding style is always consistent
-    message('Setting up git pre-commit hook..')
-    run_command('cp', '-f', 'hooks/pre-commit.hook', '.git/hooks/pre-commit')
-endif
 
 subdir('data')
 subdir('po')

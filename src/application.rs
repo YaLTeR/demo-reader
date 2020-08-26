@@ -1,6 +1,8 @@
-use gio::prelude::*;
-use gtk::prelude::*;
 use std::env;
+
+use gio::prelude::*;
+use glib::g_debug;
+use gtk::prelude::*;
 
 use crate::config;
 use crate::window::Window;
@@ -12,72 +14,57 @@ pub struct Application {
 
 impl Application {
     pub fn new() -> Self {
-        let app = gtk::Application::new(Some(config::APP_ID), gio::ApplicationFlags::FLAGS_NONE).unwrap();
+        let app =
+            gtk::Application::new(Some(config::APP_ID), gio::ApplicationFlags::FLAGS_NONE).unwrap();
         let window = Window::new();
 
         let application = Self { app, window };
 
-        application.setup_widgets();
         application.setup_gactions();
         application.setup_signals();
-        application.setup_css();
         application
     }
 
-    fn setup_widgets(&self) {
-        let builder = gtk::Builder::from_resource("/io/github/yalter/DemoReader/shortcuts.ui");
-        get_widget!(builder, gtk::ShortcutsWindow, shortcuts);
-        self.window.widget.set_help_overlay(Some(&shortcuts));
-    }
-
     fn setup_gactions(&self) {
-        // Quit
-        action!(
-            self.app,
-            "quit",
-            clone!(@strong self.app as app => move |_, _| {
+        let action = gio::SimpleAction::new("quit", None);
+        action.connect_activate({
+            let app = self.app.downgrade();
+            move |_, _| {
+                let app = app.upgrade().unwrap();
                 app.quit();
-            })
-        );
-        self.app.set_accels_for_action("app.quit", &["<primary>q"]);
-
-        // About
-        action!(
-            self.app,
-            "about",
-            clone!(@weak self.window.widget as window => move |_, _| {
-                let builder = gtk::Builder::from_resource("/io/github/yalter/DemoReader/about_dialog.ui");
-                get_widget!(builder, gtk::AboutDialog, about_dialog);
-                about_dialog.set_transient_for(Some(&window));
-
-                about_dialog.connect_response(|dialog, _| dialog.close());
-                about_dialog.show();
-
-            })
-        );
-        self.app.set_accels_for_action("win.show-help-overlay", &["<primary>comma"]);
+            }
+        });
+        self.app.add_action(&action);
+        self.app
+            .set_accels_for_action("app.quit", &["<primary>q", "Escape"]);
     }
 
     fn setup_signals(&self) {
-        self.app.connect_activate(clone!(@weak self.window.widget as window => move |app| {
-            window.set_application(Some(app));
-            app.add_window(&window);
-            window.present();
-        }));
-    }
-
-    fn setup_css(&self) {
-        let p = gtk::CssProvider::new();
-        gtk::CssProvider::load_from_resource(&p, "/io/github/yalter/DemoReader/style.css");
-        if let Some(screen) = gdk::Screen::get_default() {
-            gtk::StyleContext::add_provider_for_screen(&screen, &p, 500);
-        }
+        self.app.connect_activate({
+            let window = self.window.window.downgrade();
+            move |app| {
+                let window = window.upgrade().unwrap();
+                window.set_application(Some(app));
+                app.add_window(&window);
+                window.show_all();
+            }
+        });
     }
 
     pub fn run(&self) {
-        info!("GtkRustTemplate{} ({})", config::NAME_SUFFIX, config::APP_ID);
-        info!("Version: {} ({})", config::VERSION, config::PROFILE);
-        info!("Datadir: {}", config::PKGDATADIR);
+        g_debug!(
+            config::LOG_DOMAIN,
+            "Demo Reader{} ({})",
+            config::NAME_SUFFIX,
+            config::APP_ID
+        );
+        g_debug!(
+            config::LOG_DOMAIN,
+            "Version: {} ({})",
+            config::VERSION,
+            config::PROFILE
+        );
+        g_debug!(config::LOG_DOMAIN, "Datadir: {}", config::PKGDATADIR);
 
         let args: Vec<String> = env::args().collect();
         self.app.run(&args);

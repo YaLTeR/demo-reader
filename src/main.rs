@@ -1,18 +1,9 @@
-#[macro_use]
-extern crate log;
-#[macro_use]
-extern crate glib;
-
 use gettextrs::*;
-
-#[macro_use]
-mod utils;
 
 mod application;
 mod config;
 mod static_resources;
 mod window;
-mod window_state;
 
 use application::Application;
 use config::{GETTEXT_PACKAGE, LOCALEDIR};
@@ -24,7 +15,7 @@ fn main() {
     textdomain(GETTEXT_PACKAGE);
 
     glib::set_application_name(&format!("Demo Reader{}", config::NAME_SUFFIX));
-    glib::set_prgname(Some("rust-gtk-template"));
+    glib::set_prgname(Some("demo-reader"));
 
     gtk::init().expect("Unable to start GTK3");
 
