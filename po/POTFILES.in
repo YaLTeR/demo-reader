@@ -1,0 +1,6 @@
+data/resources/ui/about_dialog.ui.in
+data/resources/ui/shortcuts.ui
+data/resources/ui/window.ui.in
+data/io.github.yalter.DemoReader.desktop.in.in
+data/io.github.yalter.DemoReader.gschema.xml.in
+data/io.github.yalter.DemoReader.metainfo.xml.in.in
