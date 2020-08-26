@@ -10,6 +10,8 @@ glib = "0.10"
 gio = { version = "0.9", features = ["v2_46"] }
 gdk = "0.13"
 gettext-rs= { version = "0.4", features = ["gettext-system"] }
+hldemo = "0.3.0"
+memmap = "0.7.0"
 
 [dependencies.libhandy]
 git = "https://gitlab.gnome.org/World/Rust/libhandy-rs"
