@@ -16,7 +16,7 @@ pub struct Application {
 impl Application {
     pub fn new() -> Self {
         let app =
-            gtk::Application::new(Some(config::APP_ID), gio::ApplicationFlags::FLAGS_NONE).unwrap();
+            gtk::Application::new(Some(config::APP_ID), gio::ApplicationFlags::NON_UNIQUE).unwrap();
         let window = Window::new();
 
         let application = Self { app, window };
