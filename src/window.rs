@@ -1,15 +1,16 @@
 use gtk::prelude::*;
+use libhandy as hdy;
 
 use crate::config::PROFILE;
 
 pub struct Window {
-    pub window: gtk::ApplicationWindow,
+    pub window: hdy::ApplicationWindow,
 }
 
 impl Window {
     pub fn new() -> Self {
         let builder = gtk::Builder::from_resource("/io/github/yalter/DemoReader/window.ui");
-        let window: gtk::ApplicationWindow = builder.get_object("window").unwrap();
+        let window: hdy::ApplicationWindow = builder.get_object("window").unwrap();
 
         // Devel Profile
         if PROFILE == "Devel" {

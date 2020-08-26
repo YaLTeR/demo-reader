@@ -3,6 +3,7 @@ use std::env;
 use gio::prelude::*;
 use glib::g_debug;
 use gtk::prelude::*;
+use libhandy as hdy;
 
 use crate::config;
 use crate::window::Window;
@@ -40,6 +41,10 @@ impl Application {
     }
 
     fn setup_signals(&self) {
+        self.app.connect_startup(|_| {
+            hdy::init();
+        });
+
         self.app.connect_activate({
             let window = self.window.window.downgrade();
             move |app| {

@@ -10,3 +10,8 @@ glib = "0.10"
 gio = { version = "0.9", features = ["v2_46"] }
 gdk = "0.13"
 gettext-rs= { version = "0.4", features = ["gettext-system"] }
+
+[dependencies.libhandy]
+git = "https://gitlab.gnome.org/World/Rust/libhandy-rs"
+# Remember to update libhandy commit hash in flatpak manifests.
+rev = "2e4f3feee7c5611c2972e5d0d283b8ec1629b25d"
