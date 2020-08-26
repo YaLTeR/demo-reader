@@ -20,4 +20,7 @@ impl Window {
 
         Window { window }
     }
+
+    pub fn open(&self, _file: Option<gio::File>) {
+    }
 }

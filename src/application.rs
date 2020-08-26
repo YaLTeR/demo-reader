@@ -1,3 +1,4 @@
+use std::cell::Cell;
 use std::env;
 use std::rc::Rc;
 
@@ -16,8 +17,11 @@ pub struct Application {
 
 impl Application {
     pub fn new() -> Self {
-        let app =
-            gtk::Application::new(Some(config::APP_ID), gio::ApplicationFlags::NON_UNIQUE).unwrap();
+        let app = gtk::Application::new(
+            Some(config::APP_ID),
+            gio::ApplicationFlags::NON_UNIQUE | gio::ApplicationFlags::HANDLES_OPEN,
+        )
+        .unwrap();
         let window = Rc::new(Window::new());
 
         let application = Self { app, window };
@@ -46,10 +50,32 @@ impl Application {
             hdy::init();
         });
 
+        let file = Rc::new(Cell::new(None));
+        self.app.connect_open({
+            let file = Rc::downgrade(&file);
+            move |app, files, _hint| {
+                let file = file.upgrade().unwrap();
+
+                g_debug!(
+                    config::LOG_DOMAIN,
+                    "open: {:?}",
+                    files
+                        .iter()
+                        .map(|x| x.get_uri().into())
+                        .collect::<Vec<String>>()
+                );
+
+                file.set(Some(files[0].clone()));
+
+                app.activate();
+            }
+        });
+
         self.app.connect_activate({
             let window = Rc::downgrade(&self.window);
             move |app| {
                 let window = window.upgrade().unwrap();
+                window.open(file.replace(None));
                 window.window.set_application(Some(app));
                 app.add_window(&window.window);
                 window.window.show_all();
