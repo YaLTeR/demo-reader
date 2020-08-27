@@ -91,10 +91,17 @@ impl Window {
         } else {
             // No path (e.g. file over the network). Load contents manually.
 
-            // TODO: async, errors.
-            let (contents, _) = file.load_contents(None::<&gio::Cancellable>).unwrap();
+            let future = {
+                let self_ = self.clone();
+                async move {
+                    // TODO: errors.
+                    let (contents, _) = file.load_contents_async_future().await.unwrap();
 
-            self.on_demo_loaded(&contents);
+                    self_.on_demo_loaded(&contents);
+                }
+            };
+
+            context.spawn_local(future);
         }
     }
 
