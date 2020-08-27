@@ -54,20 +54,31 @@ impl Window {
 
         self.stack.set_visible_child_name("page_main");
 
-        // TODO: async, errors.
-        let info = file.query_info(
-            "standard::display-name",
-            gio::FileQueryInfoFlags::NONE,
-            None::<&gio::Cancellable>,
-        );
+        let context = glib::MainContext::default();
 
-        let name = if let Ok(info) = info {
-            info.get_display_name()
-        } else {
-            file.get_parse_name()
+        let future = {
+            let self_ = self.clone();
+            let file = file.clone();
+            async move {
+                let info = file
+                    .query_info_async_future(
+                        "standard::display-name",
+                        gio::FileQueryInfoFlags::NONE,
+                        glib::PRIORITY_DEFAULT,
+                    )
+                    .await;
+
+                let name = if let Ok(info) = info {
+                    info.get_display_name()
+                } else {
+                    file.get_parse_name()
+                };
+
+                self_.header_bar.set_subtitle(name.as_deref());
+            }
         };
 
-        self.header_bar.set_subtitle(name.as_deref());
+        context.spawn_local(future);
 
         if let Some(path) = file.get_path() {
             // We have a path so we can mmap the file.
