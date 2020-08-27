@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::rc::Rc;
 use std::str;
 
 use gio::prelude::*;
@@ -44,7 +45,7 @@ impl Window {
         }
     }
 
-    pub fn open(&self, file: Option<gio::File>) {
+    pub fn open(self: &Rc<Self>, file: Option<gio::File>) {
         if file.is_none() {
             return;
         }
